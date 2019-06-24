@@ -1,0 +1,31 @@
+{
+  "name": "hardbox-session",
+  "version": "0.0.1",
+  "description": "A module allowing session handling for hardbox",
+  "main": "lib/main.js",
+  "author": "Tomasz Rakowski",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-session": "^1.16.2"
+  },
+  "devDependencies": {
+    "@akayami/console-level": "^0.0.4",
+    "async": "^3.1.0",
+    "chai": "^4.2.0",
+    "connect-redis": "^3.4.1",
+    "eslint": "^6.0.0",
+    "fakeredis": "^2.0.0",
+    "memorystore": "^1.6.1",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "redis-mock": "^0.44.0",
+    "request": "^2.88.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "lint": "node_modules/.bin/eslint --fix .",
+    "test-cov": "node_modules/.bin/nyc mocha ./test/*.test.js",
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | node_modules/.bin/coveralls"
+  }
+}
