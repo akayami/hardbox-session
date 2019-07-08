@@ -1,6 +1,6 @@
 {
   "name": "hardbox-session",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A module allowing session handling for hardbox",
   "main": "lib/main.js",
   "author": "Tomasz Rakowski",
