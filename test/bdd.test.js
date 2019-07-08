@@ -27,39 +27,31 @@ describe('BDD Tests', () => {
 	};
 
 	beforeEach((done) => {
-
-		const h = require('../lib/main.js')(config);
-
+		
+		const app = express();
+		
 		const handler = (req, res) => {
-
-			h(req, res, (err, req, res) => {
-				//console.error(err);
-
-				if (err) {
-					res.status(err.code);
-					res.write(err.message);
-					res.end();
-				} else {
-
-					const app = express();
-					app.get('/', (req, res, next) => {
-						res.send('OK');
-						next();
-					});
-					app.get('/count', (req, res, next) => {
-						req.session.views = (req.session.views || 0) + 1;
-						res.write(String(req.session.views));
-						res.end();
-						next();
-					});
-					app.use((err, req, res, next) => {
-						//console.error(err);
-						next();
-					});
-					app(req, res);
-				}
+			
+			require('../lib/main.js')(app, config);
+			
+			app.get('/', (req, res, next) => {
+				console.log('here');
+				res.send('OK');
+				//next();
 			});
-
+			app.get('/count', (req, res, next) => {
+				req.session.views = (req.session.views || 0) + 1;
+				res.write(String(req.session.views));
+				res.end();
+				//next();
+			});
+			app.use((err, req, res, next) => {
+				if(err.code) res.status(err.code);
+				res.write(err.message);
+				res.end();
+				next();
+			});
+			app(req, res);
 		};
 
 		ser1 = require('http').createServer(handler).listen(port, (err) => {
@@ -118,6 +110,19 @@ describe('BDD Tests', () => {
 					expect(body).to.equal(String(2));
 					return cb(err);
 				});
+			},
+			(cb) => {
+				request({
+					url: `http://localhost:${port}/count`,
+					method: 'GET',
+					headers: {
+						Cookie: j.getCookieString(`http://localhost:${port}`)
+					}
+				}, (err, res, body) => {
+					expect(res.statusCode).equal(200);
+					expect(body).to.equal(String(3));
+					return cb(err);
+				});
 			}
 		], (err, res) => {
 			if (err) return done(err);
@@ -136,6 +141,7 @@ describe('BDD Tests', () => {
 					}
 				}, (err, res, body) => {
 					expect(res.statusCode).equal(500);
+					console.log(body);
 					//console.log(res.headers);
 					//expect(res.headers.location).equal(login_path);
 					return cb(err);

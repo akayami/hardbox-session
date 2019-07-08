@@ -15,12 +15,12 @@ describe('BDD Tests', () => {
 
 	it('Needs to fail to initialize when missing secret', () => {
 		expect(() => {
-			require('../lib/main.js')({});
+			require('../lib/main.js')(express(), {});
 		}).to.throw(Error, 'Secret parameter in config is required');
 	});
 
 	it('Should initialize with only secret', () => {
-		let p = require('../lib/main.js')({secret: 'keyboard cat'});
+		let p = require('../lib/main.js')(express(), {secret: 'keyboard cat'});
 	});
 
 	it('Needs to fail to initialize when missing class or type', () => {
@@ -37,7 +37,7 @@ describe('BDD Tests', () => {
 			}
 		};
 		expect(() => {
-			require('../lib/main.js')(config);
+			require('../lib/main.js')(express(), config);
 		}).to.throw(Error, 'When using storeConf, class or type must be provided');
 	});
 });

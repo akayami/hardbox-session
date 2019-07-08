@@ -20,41 +20,37 @@ describe('BDD Tests', () => {
 	};
 
 	beforeEach((done) => {
-
-		const h = require('../lib/main.js')(config);
-
+		
+		const app = express();
+		
 		const handler = (req, res) => {
-
-			h(req, res, (err, req, res) => {
-				//console.error(err);
-
-				if (err) {
-					res.status(err.code);
-					res.write(err.message);
-					res.end();
-				} else {
-
-					const app = express();
-					app.get('/', (req, res, next) => {
-						res.send('OK');
-						next();
-					});
-					app.get('/count', (req, res, next) => {
-						req.session.views = (req.session.views || 0) + 1;
-						res.write(String(req.session.views));
-						res.end();
-						next();
-					});
-					app.use((err, req, res, next) => {
-						//console.error(err);
-						next();
-					});
-					app(req, res);
-				}
+			
+			require('../lib/main.js')(app, config);
+			
+			app.use((req, res, n) => {
+				console.log('here');
+				n();
 			});
-
+			
+			app.get('/', (req, res, next) => {
+				console.log('here');
+				res.send('OK');
+				//next();
+			});
+			app.get('/count', (req, res, next) => {
+				req.session.views = (req.session.views || 0) + 1;
+				res.write(String(req.session.views));
+				res.end();
+				//next();
+			});
+			app.use((err, req, res, next) => {
+				console.error('hello', err);
+				next();
+			});
+			
+			app(req, res);
 		};
-
+		
 		ser1 = require('http').createServer(handler).listen(port, (err) => {
 			if (err) return done(err);
 			done();
